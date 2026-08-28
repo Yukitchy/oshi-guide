@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OshiGuide — Travel with a fan, not just a guide</title>
+<meta name="description" content="Find local otaku guides at anime pilgrimage sites worldwide — matched by the series you love, not just the city you're visiting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#D6335F;          /* penlight pink-red */
+  --accent-dark:#B02249;
+  --ink:#231C22;
+  --sub:#6E6169;
+  --line:#E4DDE0;
+  --bg:#F5F1F0;              /* flat warm neutral, no pastel-brand wash */
+  --card:#FFFFFF;
+  --deco:rgba(255,255,255,.6);
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Archivo",-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.65;
+  -webkit-font-smoothing:antialiased;font-size:16px;
+}
+h1,h2,h3{font-family:"Archivo Black","Archivo",sans-serif;line-height:1.15;text-wrap:balance;letter-spacing:-.01em}
+p{max-width:62ch;text-wrap:pretty}
+a{color:inherit}
+.wrap{max-width:1020px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* deco shapes — fixed by section order, never by content */
+section{position:relative;overflow:hidden}
+section::before{content:"";position:absolute;pointer-events:none;z-index:0}
+section:nth-of-type(4n+1)::before{top:-40px;right:-60px;width:240px;height:240px;background:var(--deco);border-radius:0 0 0 100%}
+section:nth-of-type(4n+2)::before{bottom:24px;right:-10px;width:190px;height:150px;background-image:radial-gradient(var(--deco) 2.5px,transparent 2.5px);background-size:19px 19px}
+section:nth-of-type(4n+3)::before{top:60px;right:-70px;width:210px;height:210px;border-radius:50%;border:16px solid var(--deco)}
+section:nth-of-type(4n+4)::before{top:44px;right:-40px;width:150px;height:26px;border-radius:999px;background:var(--deco);box-shadow:0 52px 0 -4px var(--deco),0 104px 0 8px var(--deco)}
+
+/* nav */
+nav{position:sticky;top:0;background:rgba(245,241,240,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:50}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:"Archivo Black",sans-serif;font-size:20px;text-decoration:none}
+.logo span{color:var(--accent)}
+nav .links{display:flex;gap:22px;font-size:14px;font-weight:700}
+nav .links a{text-decoration:none;color:var(--sub)}
+nav .links a:hover{color:var(--ink)}
+
+/* hero */
+.hero{padding:88px 0 76px}
+.eyebrow{letter-spacing:.16em;text-transform:uppercase;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:18px}
+.hero h1{font-size:clamp(38px,6.4vw,64px);margin-bottom:22px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:18px;color:var(--sub);margin-bottom:34px}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-block;padding:15px 30px;border-radius:999px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .12s var(--spring),box-shadow .12s ease}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 10px 26px rgba(214,51,95,.32)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(214,51,95,.38)}
+.btn-primary:active{transform:scale(.98)}
+.btn-ghost{border:2px solid var(--ink);color:var(--ink)}
+.btn-ghost:hover{transform:translateY(-2px)}
+
+/* section base */
+.sec{padding:76px 0}
+.sec-t{font-size:clamp(26px,3.8vw,38px);margin-bottom:14px}
+.sec-lead{color:var(--sub);font-size:17px;margin-bottom:44px}
+
+/* why */
+.why{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.why .wrap{--deco:rgba(214,51,95,.06)}
+.big-quote{font-family:"Archivo Black",sans-serif;font-size:clamp(22px,3.4vw,32px);line-height:1.4;max-width:22em}
+.big-quote .u{background:linear-gradient(transparent 62%,rgba(214,51,95,.25) 62%);padding:0 3px}
+
+/* how it works */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:36px}
+.step .n{font-family:"Archivo Black",sans-serif;font-size:44px;color:var(--accent);font-variant-numeric:tabular-nums}
+.step h3{font-size:19px;margin:8px 0 8px}
+.step p{font-size:15px;color:var(--sub)}
+.note{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--sub);text-wrap:balance}
+
+/* guides */
+.guides-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
+.gcard{background:var(--card);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:14px;transition:transform .16s var(--ease-out)}
+.gcard:hover{transform:translateY(-3px)}
+.gcard .head{display:flex;align-items:center;gap:14px}
+.avatar{width:58px;height:58px;border-radius:50%;flex-shrink:0}
+.gcard h3{font-size:20px}
+.gcard .loc{font-size:14px;color:var(--sub);font-weight:500}
+.gcard p{font-size:15px;color:var(--sub)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:rgba(214,51,95,.1);color:var(--accent-dark)}
+.gcard .link{margin-top:auto;font-weight:700;font-size:15px;color:var(--accent-dark);text-decoration:none;background-image:linear-gradient(var(--accent),var(--accent));background-size:0% 2px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .25s var(--ease-out);align-self:flex-start}
+.gcard .link:hover{background-size:100% 2px}
+.gcard.recruit{background:transparent;border:2px dashed var(--line)}
+.gcard.recruit h3{color:var(--sub)}
+.badge{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+
+/* fandom strip */
+.fandoms{background:var(--ink);color:#F5F1F0}
+.fandoms .sec-t{color:#fff}
+.fandoms .sec-lead{color:#B5A9B0}
+.fandoms .wrap{--deco:rgba(255,255,255,.07)}
+.cloud{display:flex;flex-wrap:wrap;gap:10px}
+.cloud span{font-size:14px;font-weight:700;padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.25)}
+.cloud span.hot{background:var(--accent);border-color:var(--accent)}
+
+/* dual CTA */
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.cta-card{border-radius:20px;padding:38px 32px;background:var(--card)}
+.cta-card.pink{background:var(--accent);color:#fff}
+.cta-card h3{font-size:24px;margin-bottom:12px}
+.cta-card p{font-size:15px;margin-bottom:24px}
+.cta-card.pink p{color:rgba(255,255,255,.9)}
+.cta-card .btn{font-size:15px;padding:13px 26px}
+.cta-card.pink .btn{background:#fff;color:var(--accent-dark)}
+.cta-card:not(.pink) .btn{background:var(--ink);color:#fff}
+
+footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(--sub)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+/* reveal on scroll, once */
+.reveal{animation:reveal-in linear both;animation-timeline:view();animation-range:entry 10% cover 32%}
+@keyframes reveal-in{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@supports not (animation-timeline: view()){.reveal{animation:none;opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+@media(max-width:760px){
+  .steps,.guides-grid,.dual{grid-template-columns:1fr}
+  .hero{padding:60px 0 56px}
+  nav .links{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#">Oshi<span>Guide</span></a>
+    <div class="links">
+      <a href="#how">How it works</a>
+      <a href="#guides">Guides</a>
+      <a href="#for-guides">Become a guide</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Otaku-to-otaku travel</div>
+    <h1>Travel with a <em>fan</em>,<br>not just a guide.</h1>
+    <p>Find local otaku guides at anime, manga &amp; game pilgrimage sites worldwide — matched by the series you love, not just the city you're visiting.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#travelers">Find your guide</a>
+      <a class="btn btn-ghost" href="#for-guides">Become a guide</a>
+    </div>
+  </div>
+</section>
+
+<section class="why sec">
+  <div class="wrap reveal">
+    <p class="big-quote">Every tour site can show you Akihabara.<br>Only a fellow fan can show you <span class="u">your</span> Akihabara.</p>
+  </div>
+</section>
+
+<section class="sec" id="how">
+  <div class="wrap">
+    <h2 class="sec-t">How it works</h2>
+    <p class="sec-lead">Three steps. No account, no platform fees.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="n">1</div>
+        <h3>Tell us your fandom</h3>
+        <p>The series you love, the city you're heading to, and your dates. That's the whole form.</p>
+      </div>
+      <div class="step reveal">
+        <div class="n">2</div>
+        <h3>Get matched with a local fan</h3>
+        <p>We hand-match you with a local otaku guide who actually knows and loves your series — not a script-reader.</p>
+      </div>
+      <div class="step reveal">
+        <div class="n">3</div>
+        <h3>Book on the guide's own page</h3>
+        <p>You book directly through the guide's existing listing on Viator, GetYourGuide and similar platforms, with their buyer protection.</p>
+      </div>
+    </div>
+    <p class="note">OshiGuide never touches your payment. Matching is free — we just connect fans.</p>
+  </div>
+</section>
+
+<section class="sec" id="guides">
+  <div class="wrap">
+    <h2 class="sec-t">The guides</h2>
+    <p class="sec-lead">Guide #001 is live in Tokyo. The rest of the map is being recruited — one fan at a time.</p>
+    <div class="guides-grid">
+      <div class="gcard reveal">
+        <div class="head">
+          <svg class="avatar" viewBox="0 0 60 60" aria-hidden="true">
+            <circle cx="30" cy="30" r="30" fill="#FDE8EE"/>
+            <path d="M30 34c-8.4 0-15.4 5.4-17.2 12.8A30 30 0 0 0 30 60a30 30 0 0 0 17.2-13.2C45.4 39.4 38.4 34 30 34z" fill="#D6335F"/>
+            <ellipse cx="30" cy="24" rx="10.6" ry="11.4" fill="#FBDFC3"/>
+            <path d="M19 22c1-6 5-10 11-10s10 4 11 10c-2-2-6-3.4-11-3.4S21 20 19 22z" fill="#3C2F28"/>
+            <ellipse cx="25.6" cy="24.6" rx="1.5" ry="1.9" fill="#3C2F28"/>
+            <ellipse cx="34.4" cy="24.6" rx="1.5" ry="1.9" fill="#3C2F28"/>
+            <path d="M26.8 29.4c1.8 1.6 4.6 1.6 6.4 0" stroke="#3C2F28" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <circle cx="21.4" cy="27.8" r="2.2" fill="#F7B8A8" opacity=".65"/>
+          </svg>
+          <div>
+            <h3>Yuuki</h3>
+            <div class="loc">Akihabara · Tokyo, Japan</div>
+          </div>
+        </div>
+        <p>Tour guide and lifelong otaku running anime &amp; retro-game tours in Akihabara. Podcast host, arcade regular, and the reason this site exists.</p>
+        <div class="tags">
+          <span class="tag">Anime</span><span class="tag">Retro games</span><span class="tag">Akihabara deep culture</span><span class="tag">EN / JP</span>
+        </div>
+        <a class="link" href="https://animesenseijp.com" target="_blank" rel="noopener">See Yuuki's Akihabara tour →</a>
+      </div>
+      <div class="gcard recruit reveal">
+        <div class="badge">Recruiting</div>
+        <h3>Kyoto &amp; Uji, Japan</h3>
+        <p>Sound! Euphonium, Bocchi the Rock filming spots, Kyoto Animation territory. Are you the fan who knows every cut?</p>
+        <a class="link" href="#for-guides">This could be you →</a>
+      </div>
+      <div class="gcard recruit reveal">
+        <div class="badge">Recruiting</div>
+        <h3>Paris, France</h3>
+        <p>From Japan Expo to the real streets behind your favorite series set in Paris. Local fans wanted.</p>
+        <a class="link" href="#for-guides">This could be you →</a>
+      </div>
+      <div class="gcard recruit reveal">
+        <div class="badge">Recruiting</div>
+        <h3>Seoul · Taipei · Los Angeles</h3>
+        <p>Anime pilgrimage culture is global now. If your city has fans flying in, they deserve a fan at the airport side too.</p>
+        <a class="link" href="#for-guides">This could be you →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="fandoms sec">
+  <div class="wrap">
+    <h2 class="sec-t">Search by what you love</h2>
+    <p class="sec-lead">The whole point of OshiGuide: you don't search "Tokyo tour". You search your oshi.</p>
+    <div class="cloud reveal">
+      <span class="hot">Steins;Gate</span><span>Slam Dunk</span><span>Your Name</span><span class="hot">Evangelion</span><span>Haikyu!!</span><span>Pokémon</span><span>Sound! Euphonium</span><span class="hot">Retro arcades</span><span>Love Live!</span><span>Bocchi the Rock</span><span>Demon Slayer</span><span>Gundam</span><span>K-On!</span><span>Jujutsu Kaisen</span>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="travelers">
+  <div class="wrap">
+    <div class="dual">
+      <div class="cta-card pink reveal">
+        <h3>Traveling somewhere sacred?</h3>
+        <p>Tell us your fandom, destination and dates. A real human (Yuuki) matches you with a local fan guide — for free.</p>
+        <a class="btn" href="mailto:icchan417@gmail.com?subject=OshiGuide%20request%3A%20%5Byour%20fandom%5D%20in%20%5Bcity%5D&body=Fandom(s)%3A%0ACity%20%2F%20site%3A%0ADates%3A%0AGroup%20size%3A">Request a match</a>
+      </div>
+      <div class="cta-card reveal" id="for-guides">
+        <h3>You're the local fan?</h3>
+        <p>Free listing, forever. Keep taking bookings on your own Viator or GetYourGuide page — we just send fans your way.</p>
+        <a class="btn" href="mailto:icchan417@gmail.com?subject=OshiGuide%20guide%20application%3A%20%5Byour%20city%5D&body=City%20%2F%20pilgrimage%20sites%3A%0AFandoms%20you%20can%20guide%3A%0AYour%20existing%20listing%20(Viator%20etc.)%2C%20if%20any%3A%0ALanguages%3A">Apply as a guide</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 OshiGuide — an Akihabara-born project by Yuuki</div>
+    <div>Guide #001 reporting from Akihabara, Tokyo 🗼</div>
+  </div>
+</footer>
+
+</body>
+</html>
