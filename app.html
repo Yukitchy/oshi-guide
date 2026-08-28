@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OshiGuide App — prototype</title>
+<meta name="description" content="Interactive prototype of the OshiGuide matching app.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Archivo+Black&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#D6335F; --accent-dark:#B02249;
+  --ink:#231C22; --sub:#6E6169; --line:#E4DDE0;
+  --bg:#F5F1F0; --card:#FFFFFF;
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:"Archivo","Noto Sans JP",-apple-system,sans-serif;
+  background:var(--bg);color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;display:grid;place-items:center;padding:40px 16px;
+}
+.stage{position:relative;display:grid;place-items:center}
+.stage::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(214,51,95,.16),transparent 70%);filter:blur(8px)}
+.phone{position:relative;width:390px;background:#17121a;border-radius:44px;padding:10px;
+  box-shadow:0 2px 6px rgba(40,20,30,.12),0 18px 36px rgba(40,20,30,.18),0 44px 80px rgba(40,20,30,.24)}
+.scr{background:var(--bg);border-radius:35px;overflow:hidden;height:760px;display:flex;flex-direction:column;position:relative}
+.statusbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:14px;font-weight:700;flex-shrink:0}
+.statusbar .right{display:flex;gap:5px;align-items:center}
+.desk-note{margin-top:22px;font-size:13px;color:var(--sub);text-align:center}
+.desk-note a{color:var(--accent-dark);font-weight:700}
+
+@media(max-width:760px){
+  body{padding:0;display:block}
+  .stage::before{display:none}
+  .phone{width:100%;border-radius:0;padding:0;box-shadow:none}
+  .scr{border-radius:0;height:100vh;height:100dvh}
+  .statusbar{display:none}
+  .desk-note{display:none}
+}
+
+/* app chrome */
+.appbar{padding:8px 20px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.appbar .logo{font-family:"Archivo Black",sans-serif;font-size:19px}
+.appbar .logo span{color:var(--accent)}
+.appbar .proto{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--ink);padding:4px 10px;border-radius:999px}
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 20px 20px;scrollbar-width:none}
+main::-webkit-scrollbar{display:none}
+.tabbar{flex-shrink:0;display:flex;border-top:1px solid var(--line);background:var(--card);padding:6px 6px calc(10px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;background:none;border:none;font-family:inherit;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:12px;transition:color .15s}
+.tabbar button svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button.on{color:var(--accent)}
+
+.screen{display:none;animation:sc-in .28s var(--ease-out)}
+.screen.on{display:block}
+@keyframes sc-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1.t{font-family:"Archivo Black","Noto Sans JP",sans-serif;font-size:26px;line-height:1.2;margin:10px 0 6px;text-wrap:balance}
+p.lead{font-size:14px;color:var(--sub);margin-bottom:18px;text-wrap:pretty}
+.sec-label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin:18px 0 10px}
+
+/* match */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;user-select:none;transition:all .12s var(--spring)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.04)}
+.city-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.city-row::-webkit-scrollbar{display:none}
+.city{font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;background:transparent;border:1.5px solid var(--line);cursor:pointer;white-space:nowrap;transition:all .12s}
+.city.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.go{width:100%;margin-top:22px;padding:16px;border:none;border-radius:999px;background:var(--accent);color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 10px 24px rgba(214,51,95,.32);transition:transform .12s var(--spring)}
+.go:active{transform:scale(.97)}
+.go:disabled{background:var(--line);color:var(--sub);box-shadow:none;cursor:default}
+
+/* sync overlay */
+.sync{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:30;text-align:center;padding:30px}
+.sync.on{display:flex}
+.sync .big{font-family:"Archivo Black",sans-serif;font-size:74px;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1}
+.sync .lbl{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin-top:10px}
+.ring{width:190px;height:190px;position:relative;display:grid;place-items:center;margin-bottom:18px}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .track{stroke:var(--line)}
+.ring .bar{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:534;stroke-dashoffset:534}
+
+/* guide cards */
+.gcard{background:var(--card);border-radius:18px;padding:16px;margin-bottom:12px;cursor:pointer;transition:transform .14s var(--ease-out);position:relative;overflow:hidden}
+.gcard:active{transform:scale(.98)}
+.gcard .pen{position:absolute;left:0;top:0;bottom:0;width:5px}
+.gcard .row{display:flex;align-items:center;gap:12px}
+.gcard .av{width:48px;height:48px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:"Archivo Black",sans-serif;font-size:19px;color:#fff}
+.gcard h3{font-size:16px;font-weight:700}
+.gcard .loc{font-size:12px;color:var(--sub)}
+.gcard .syncpct{margin-left:auto;text-align:right}
+.gcard .syncpct b{font-family:"Archivo Black",sans-serif;font-size:21px;color:var(--accent);font-variant-numeric:tabular-nums}
+.gcard .syncpct small{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--sub)}
+.gcard .gtags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.gt{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(214,51,95,.09);color:var(--accent-dark)}
+.gt.hit{background:var(--accent);color:#fff}
+
+/* sheet */
+.sheet-wrap{position:absolute;inset:0;z-index:40;display:none}
+.sheet-wrap.on{display:block}
+.sheet-bg{position:absolute;inset:0;background:rgba(30,15,22,.45)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 0 0;padding:14px 22px 26px;max-height:82%;overflow-y:auto;animation:up .3s var(--ease-out)}
+@keyframes up{from{transform:translateY(40%)}to{transform:none}}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 14px}
+.sheet .head{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.sheet .av{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-family:"Archivo Black",sans-serif;font-size:24px;color:#fff;flex-shrink:0}
+.sheet h2{font-size:21px;font-weight:900}
+.sheet .loc{font-size:13px;color:var(--sub)}
+.sheet .oshi-years{display:inline-block;font-size:12px;font-weight:700;background:var(--ink);color:#fff;border-radius:999px;padding:3px 10px;margin-top:4px}
+.sheet p.bio{font-size:14px;color:var(--sub);line-height:1.7;margin:10px 0}
+.sheet .review{border-left:3px solid var(--accent);padding:2px 0 2px 12px;font-size:13px;color:var(--sub);font-style:italic;margin:14px 0}
+.sheet .review b{display:block;font-style:normal;font-size:11px;letter-spacing:.06em;margin-top:4px;color:var(--ink)}
+.book{width:100%;padding:15px;border:none;border-radius:999px;background:var(--ink);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
+.meetlight{width:100%;padding:13px;border:2px solid var(--line);background:none;border-radius:999px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;color:var(--ink)}
+
+/* quest */
+.qhead{background:var(--ink);color:#fff;border-radius:18px;padding:18px;display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.qhead .pr{width:64px;height:64px;position:relative;display:grid;place-items:center;flex-shrink:0}
+.qhead .pr svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.qhead .pr circle{fill:none;stroke-width:6}
+.qhead .pr .tr{stroke:rgba(255,255,255,.2)}
+.qhead .pr .br{stroke:#FFC24B;stroke-linecap:round;stroke-dasharray:163;transition:stroke-dashoffset .5s var(--ease-out)}
+.qhead .pr b{font-family:"Archivo Black",sans-serif;font-size:16px}
+.qhead h2{font-size:17px;font-weight:900;line-height:1.3}
+.qhead .qs{font-size:12px;color:rgba(255,255,255,.75)}
+.spot{background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:transform .12s}
+.spot:active{transform:scale(.98)}
+.spot .st{width:44px;height:44px;border-radius:50%;border:2px dashed var(--line);flex-shrink:0;display:grid;place-items:center;font-size:19px;transition:all .2s var(--spring)}
+.spot.done .st{border:none;background:var(--accent);color:#fff;transform:rotate(-8deg)}
+.spot h3{font-size:14px;font-weight:700}
+.spot .why{font-size:12px;color:var(--sub)}
+.spot .jp{font-size:11px;color:var(--sub);font-family:"Noto Sans JP",sans-serif}
+.qbadge{display:none;background:linear-gradient(135deg,#FFC24B,#FF8A3D);border-radius:18px;padding:18px;text-align:center;color:#4a2a08;font-weight:900;font-size:15px;margin-top:14px;animation:sc-in .4s var(--ease-out)}
+.qbadge.on{display:block}
+.qnote{font-size:12px;color:var(--sub);margin-top:14px;text-wrap:pretty}
+
+/* phrases */
+.ph{background:var(--card);border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;transition:transform .12s}
+.ph:active{transform:scale(.98)}
+.ph .jpword{font-family:"Noto Sans JP",sans-serif;font-size:19px;font-weight:900}
+.ph .roma{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.04em}
+.ph .mean{font-size:13px;color:var(--sub);margin-top:4px}
+.ph .use{display:none;font-size:13px;color:var(--ink);margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.ph.open .use{display:block}
+
+/* penlight */
+#scr-light{margin:-4px -20px -20px;height:calc(100% + 24px)}
+.light{height:100%;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#17121a;color:#fff;text-align:center;padding:30px;transition:background .4s}
+.light .beam{width:150px;height:290px;border-radius:75px;transition:all .35s var(--ease-out);cursor:pointer}
+.light .beam.pulse{animation:pulse .5s var(--ease-out)}
+@keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.light h2{font-size:19px;font-weight:900;text-wrap:balance}
+.light p{font-size:13px;color:rgba(255,255,255,.65);max-width:26ch}
+.light .colors{display:flex;gap:10px}
+.light .c{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.light .c.on{border-color:#fff}
+
+.toast{position:absolute;left:20px;right:20px;bottom:86px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;padding:13px 16px;border-radius:14px;z-index:60;opacity:0;transform:translateY(8px);transition:all .25s var(--ease-out);pointer-events:none;text-align:center}
+.toast.on{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="stage">
+<div>
+<div class="phone"><div class="scr">
+  <div class="statusbar"><span>9:41</span><span class="right">●●●● 5G ▮</span></div>
+  <div class="appbar">
+    <div class="logo">Oshi<span>Guide</span></div>
+    <div class="proto">Prototype</div>
+  </div>
+
+  <main>
+    <!-- MATCH -->
+    <div class="screen on" id="scr-match">
+      <h1 class="t">What do you love?</h1>
+      <p class="lead">Pick your fandoms. We match you with a local fan — a friend for a day, not a tour robot.</p>
+      <div class="sec-label">Your fandoms</div>
+      <div class="chips" id="fandom-chips"></div>
+      <div class="sec-label">Where are you going?</div>
+      <div class="city-row" id="city-row"></div>
+      <button class="go" id="go" disabled>Pick a fandom first</button>
+    </div>
+
+    <!-- GUIDES -->
+    <div class="screen" id="scr-guides">
+      <h1 class="t">The guides</h1>
+      <p class="lead">Fan cards, not resumes. Tap one to see their oshi profile.</p>
+      <div id="guide-list"></div>
+      <p class="qnote">* Prototype demo data. Every guide except Yuuki is a placeholder, not a real person.</p>
+    </div>
+
+    <!-- QUEST -->
+    <div class="screen" id="scr-quest">
+      <h1 class="t">Pilgrimage Quest</h1>
+      <p class="lead">Your guide stamps each holy site as you visit. Complete the quest, earn the badge.</p>
+      <div class="qhead">
+        <div class="pr">
+          <svg viewBox="0 0 60 60"><circle class="tr" cx="30" cy="30" r="26"/><circle class="br" id="qring" cx="30" cy="30" r="26" stroke-dashoffset="163"/></svg>
+          <b id="qcount">0/5</b>
+        </div>
+        <div>
+          <h2>Akihabara: Holy Land Run</h2>
+          <div class="qs">with Guide #001 Yuuki · approx. 4 hours</div>
+        </div>
+      </div>
+      <div id="spots"></div>
+      <div class="qbadge" id="qbadge">🏆 PILGRIM OF AKIBA unlocked — screenshot this and flex.</div>
+      <p class="qnote">All five spots are real Akihabara locations. Tap to stamp (in the real app, your guide stamps them on site).</p>
+    </div>
+
+    <!-- PHRASES -->
+    <div class="screen" id="scr-phrases">
+      <h1 class="t">Otaku phrasebook</h1>
+      <p class="lead">Break the ice in your guide's native tongue. Tap a card for when to use it.</p>
+      <div id="phrase-list"></div>
+    </div>
+
+    <!-- PENLIGHT -->
+    <div class="screen" id="scr-light">
+      <div class="light" id="light">
+        <h2>Meetup Penlight</h2>
+        <p>Meeting your guide at a crowded station? You both flash the same color. Tap the light to pulse it.</p>
+        <div class="beam" id="beam"></div>
+        <div class="colors" id="colors"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- sync overlay -->
+  <div class="sync" id="sync">
+    <div class="ring">
+      <svg viewBox="0 0 190 190"><circle class="track" cx="95" cy="95" r="85"/><circle class="bar" id="syncbar" cx="95" cy="95" r="85"/></svg>
+      <div>
+        <div class="big" id="syncnum">0<span style="font-size:38px">%</span></div>
+        <div class="lbl">Oshi sync rate</div>
+      </div>
+    </div>
+    <p class="lead" id="synctext">Scanning fellow fans…</p>
+  </div>
+
+  <!-- profile sheet -->
+  <div class="sheet-wrap" id="sheetwrap">
+    <div class="sheet-bg" id="sheetbg"></div>
+    <div class="sheet" id="sheet"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="tabbar" id="tabbar">
+    <button data-s="match" class="on"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Match</button>
+    <button data-s="guides"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Guides</button>
+    <button data-s="quest"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.4 6.7 19.1l1-5.8-4.2-4.1 5.9-.9z"/></svg>Quest</button>
+    <button data-s="phrases"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>Phrases</button>
+    <button data-s="light"><svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M10.5 14.5L10 21.5h4l-.5-7"/></svg>Light</button>
+  </div>
+</div></div>
+<p class="desk-note">Interactive prototype · demo data only · <a href="index.html">back to oshiguide top</a></p>
+</div>
+</div>
+
+<script>
+"use strict";
+var GUIDES = [
+  {id:"yuuki", name:"Yuuki", city:"Akihabara · Tokyo", cityKey:"Tokyo", color:"#FF4D6D",
+   tags:["Steins;Gate","Retro games","Evangelion","Idol culture"],
+   years:30, langs:"EN / JP", real:true,
+   bio:"Guide #001 and the reason this app exists. Akihabara tour guide, podcast host, arcade regular. Will absolutely lose track of time in Super Potato with you.",
+   review:{text:"It did not feel like a tour. It felt like my friend who happens to live in Akihabara showed me his city.", by:"Guest from the US"}},
+  {id:"aoi", name:"Aoi *", city:"Kyoto &amp; Uji", cityKey:"Kyoto", color:"#4DA3FF",
+   tags:["Sound! Euphonium","K-On!","Bocchi the Rock"],
+   years:12, langs:"EN / JP",
+   bio:"Placeholder guide. Brass-band kid turned KyoAni pilgrim. Knows which Uji bridge shot matches which episode cut.",
+   review:{text:"She hummed the euphonium part on the actual bridge. I cried.", by:"Demo review"}},
+  {id:"marin", name:"Marin *", city:"Kamakura &amp; Enoshima", cityKey:"Kamakura", color:"#39C6A5",
+   tags:["Slam Dunk","Your Name"],
+   years:9, langs:"JP / basic EN",
+   bio:"Placeholder guide. Times the Kamakura-koko-mae crossing photo to the exact train. Translation app power user.",
+   review:{text:"The crossing at sunset, train passing, opening song playing. Perfect.", by:"Demo review"}},
+  {id:"hugo", name:"Hugo *", city:"Paris", cityKey:"Paris", color:"#FFC24B",
+   tags:["Gundam","Saint Seiya","City Hunter"],
+   years:20, langs:"FR / EN",
+   bio:"Placeholder guide. Grew up on Club Dorothée anime. Runs the reverse route: Japanese fans visiting the France that raised a generation of otaku.",
+   review:{text:"An entire afternoon about how France fell in love with anime first.", by:"Demo review"}},
+  {id:"jisoo", name:"Jisoo *", city:"Seoul", cityKey:"Seoul", color:"#B06CF0",
+   tags:["Solo Leveling","Tower of God","Retro games"],
+   years:8, langs:"KR / EN",
+   bio:"Placeholder guide. Manhwa cafe navigator and retro arcade hunter in Seoul.",
+   review:{text:"Found me a webtoon cafe I never would have entered alone.", by:"Demo review"}},
+  {id:"alex", name:"Alex *", city:"Los Angeles", cityKey:"LA", color:"#FF8A3D",
+   tags:["Pokémon","Cowboy Bebop","Evangelion"],
+   years:15, langs:"EN",
+   bio:"Placeholder guide. Anime Expo veteran. Little Tokyo lunch spots ranked by which anime poster is on the wall.",
+   review:{text:"Half tour, half two fans arguing about Eva endings. 10/10.", by:"Demo review"}}
+];
+var FANDOMS = ["Steins;Gate","Evangelion","Retro games","Slam Dunk","Your Name","Sound! Euphonium","K-On!","Bocchi the Rock","Pokémon","Gundam","Solo Leveling","Cowboy Bebop","Idol culture","Saint Seiya"];
+var CITIES = ["Anywhere","Tokyo","Kyoto","Kamakura","Paris","Seoul","LA"];
+var PHRASES = [
+  {jp:"推し", roma:"oshi", mean:"The one you stan. The character or idol you would defend with your life.", use:"Point at your guide's tote bag and ask: oshi? Instant friendship."},
+  {jp:"聖地巡礼", roma:"seichi junrei", mean:"Anime pilgrimage — literally visiting the holy land.", use:"Say it at the airport counter with a straight face. You are here on seichi junrei."},
+  {jp:"尊い", roma:"toutoi", mean:"Too precious for this world. Beyond beautiful.", use:"Whisper it at the real-life scenery from the opening scene."},
+  {jp:"神回", roma:"kami-kai", mean:"A god-tier episode.", use:"Ask your guide which kami-kai happened HERE. Then stand where the camera was."},
+  {jp:"ガチ勢", roma:"gachi-zei", mean:"The hardcore faction. Fans who do not play around.", use:"When your guide recites a scene frame by frame: you are gachi-zei, aren't you."},
+  {jp:"積みゲー", roma:"tsumi-gee", mean:"The pile of games you bought and never played.", use:"Confess your backlog in Super Potato. Buy one more anyway."}
+];
+var SPOTS = [
+  {n:"Kanda Myojin Shrine", jp:"神田明神", why:"The Love Live! shrine — anime ema tablets everywhere", ic:"⛩️"},
+  {n:"Radio Kaikan", jp:"ラジオ会館", why:"Steins;Gate ground zero. Yes, THAT building", ic:"🛰️"},
+  {n:"Super Potato", jp:"スーパーポテト", why:"Retro game heaven across three floors", ic:"🕹️"},
+  {n:"Gachapon Kaikan", jp:"ガチャポン会館", why:"Hundreds of capsule machines. Bring coins", ic:"🎰"},
+  {n:"Chuo-dori maid street", jp:"中央通り", why:"The Akiba street crossing every anime borrows", ic:"🏙️"}
+];
+
+var picked = [], city = "Anywhere", stamped = 0;
+function $(id){ return document.getElementById(id); }
+function esc(s){ return s; }
+
+/* tabs */
+$("tabbar").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if(!b) return;
+  document.querySelectorAll(".tabbar button").forEach(function(x){ x.classList.toggle("on", x===b); });
+  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("on"); });
+  $("scr-" + b.dataset.s).classList.add("on");
+});
+
+/* match chips */
+FANDOMS.forEach(function(f){
+  var c = document.createElement("div");
+  c.className = "chip"; c.textContent = f; c.setAttribute("role","button"); c.tabIndex = 0;
+  c.onclick = function(){
+    c.classList.toggle("on");
+    if(c.classList.contains("on")) picked.push(f); else picked = picked.filter(function(x){ return x!==f; });
+    var go = $("go");
+    go.disabled = picked.length === 0;
+    go.textContent = picked.length ? "Find my fellow fan ✨" : "Pick a fandom first";
+  };
+  $("fandom-chips").appendChild(c);
+});
+CITIES.forEach(function(ct, i){
+  var c = document.createElement("button");
+  c.className = "city" + (i===0 ? " on" : ""); c.textContent = ct;
+  c.onclick = function(){
+    city = ct;
+    document.querySelectorAll(".city").forEach(function(x){ x.classList.toggle("on", x===c); });
+  };
+  $("city-row").appendChild(c);
+});
+
+function syncScore(g){
+  var hits = g.tags.filter(function(t){ return picked.indexOf(t) >= 0; }).length;
+  if(!hits) return 41 + (g.name.length * 3) % 12;
+  return Math.min(98, 58 + hits * 13 + (g.id.length * 5) % 7);
+}
+
+$("go").onclick = function(){
+  var pool = GUIDES.filter(function(g){ return city==="Anywhere" || g.cityKey===city; });
+  if(!pool.length) pool = GUIDES.slice();
+  var ranked = pool.map(function(g){ return {g:g, s:syncScore(g)}; }).sort(function(a,b){ return b.s-a.s; });
+  var top = ranked[0];
+  var ov = $("sync"); ov.classList.add("on");
+  $("synctext").textContent = "Scanning fellow fans in " + (city==="Anywhere" ? "the whole map" : city) + "…";
+  var bar = $("syncbar"), num = $("syncnum");
+  bar.style.strokeDashoffset = 534;
+  var t0 = null, target = top.s, finished = false;
+  function finish(){
+    if(finished) return;
+    finished = true;
+    num.innerHTML = target + "<span style=\"font-size:38px\">%</span>";
+    bar.style.strokeDashoffset = 534 - 534 * (target/100);
+    setTimeout(function(){
+      ov.classList.remove("on");
+      openSheet(top.g, target, ranked.slice(1,3));
+    }, 700);
+  }
+  function frame(ts){
+    if(finished) return;
+    if(!t0) t0 = ts;
+    var p = Math.min(1, (ts - t0) / 1500);
+    var eased = 1 - Math.pow(1 - p, 3);
+    num.innerHTML = Math.round(target * eased) + "<span style=\"font-size:38px\">%</span>";
+    bar.style.strokeDashoffset = 534 - 534 * (target/100) * eased;
+    if(p < 1) requestAnimationFrame(frame);
+    else finish();
+  }
+  requestAnimationFrame(frame);
+  setTimeout(finish, 2200); /* rAF throttle guard: locked screens / hidden tabs */
+};
+
+/* guide list */
+function guideCard(g, score){
+  var hits = g.tags.map(function(t){
+    var hit = picked.indexOf(t) >= 0;
+    return "<span class=\"gt" + (hit ? " hit" : "") + "\">" + t + "</span>";
+  }).join("");
+  var pct = score != null ? score : syncScore(g);
+  return "<div class=\"gcard\" data-g=\"" + g.id + "\">" +
+    "<div class=\"pen\" style=\"background:" + g.color + "\"></div>" +
+    "<div class=\"row\">" +
+    "<div class=\"av\" style=\"background:" + g.color + "\">" + g.name.charAt(0) + "</div>" +
+    "<div><h3>" + g.name + "</h3><div class=\"loc\">" + g.city + " · " + g.langs + "</div></div>" +
+    "<div class=\"syncpct\"><b>" + pct + "%</b><small>OSHI SYNC</small></div>" +
+    "</div><div class=\"gtags\">" + hits + "</div></div>";
+}
+function renderGuides(){
+  $("guide-list").innerHTML = GUIDES.map(function(g){ return guideCard(g); }).join("");
+}
+renderGuides();
+$("guide-list").addEventListener("click", function(e){
+  var card = e.target.closest(".gcard"); if(!card) return;
+  var g = GUIDES.filter(function(x){ return x.id===card.dataset.g; })[0];
+  openSheet(g, syncScore(g), []);
+});
+
+/* sheet */
+function openSheet(g, score, runners){
+  var runnersHtml = "";
+  if(runners && runners.length){
+    runnersHtml = "<div class=\"sec-label\">Also high sync</div>" +
+      runners.map(function(r){ return guideCard(r.g, r.s); }).join("");
+  }
+  $("sheet").innerHTML =
+    "<div class=\"grab\"></div>" +
+    "<div class=\"head\">" +
+      "<div class=\"av\" style=\"background:" + g.color + "\">" + g.name.charAt(0) + "</div>" +
+      "<div><h2>" + g.name + " <span style=\"color:var(--accent);font-family:'Archivo Black'\">" + score + "%</span></h2>" +
+      "<div class=\"loc\">" + g.city + " · " + g.langs + "</div>" +
+      "<span class=\"oshi-years\">Otaku for " + g.years + "+ years</span></div>" +
+    "</div>" +
+    "<p class=\"bio\">" + g.bio + "</p>" +
+    "<div class=\"gtags\" style=\"display:flex;flex-wrap:wrap;gap:6px\">" +
+      g.tags.map(function(t){ return "<span class=\"gt" + (picked.indexOf(t)>=0 ? " hit" : "") + "\" style=\"font-size:12px;padding:4px 10px;border-radius:999px;\">" + t + "</span>"; }).join("") + "</div>" +
+    "<div class=\"review\">“" + g.review.text + "”<b>— " + g.review.by + "</b></div>" +
+    "<button class=\"book\" onclick=\"toast('Prototype: this opens the guide&#39;s real Viator / GetYourGuide page')\">Book on their Viator page →</button>" +
+    "<button class=\"meetlight\" onclick=\"meetLight('" + g.color + "')\">🔦 Set meetup penlight to " + g.name.split(" ")[0] + "&#39;s color</button>" +
+    runnersHtml;
+  $("sheetwrap").classList.add("on");
+}
+$("sheetbg").onclick = function(){ $("sheetwrap").classList.remove("on"); };
+$("sheet").addEventListener("click", function(e){
+  var card = e.target.closest(".gcard");
+  if(card){
+    var g = GUIDES.filter(function(x){ return x.id===card.dataset.g; })[0];
+    openSheet(g, syncScore(g), []);
+  }
+});
+
+/* quest */
+SPOTS.forEach(function(s, i){
+  var d = document.createElement("div");
+  d.className = "spot";
+  d.innerHTML = "<div class=\"st\">" + s.ic + "</div><div><h3>" + s.n + " <span class=\"jp\">" + s.jp + "</span></h3><div class=\"why\">" + s.why + "</div></div>";
+  d.onclick = function(){
+    d.classList.toggle("done");
+    stamped = document.querySelectorAll(".spot.done").length;
+    $("qcount").textContent = stamped + "/5";
+    $("qring").style.strokeDashoffset = 163 - 163 * stamped / 5;
+    $("qbadge").classList.toggle("on", stamped === 5);
+  };
+  $("spots").appendChild(d);
+});
+
+/* phrases */
+PHRASES.forEach(function(p){
+  var d = document.createElement("div");
+  d.className = "ph";
+  d.innerHTML = "<div class=\"jpword\">" + p.jp + "</div><div class=\"roma\">" + p.roma + "</div><div class=\"mean\">" + p.mean + "</div><div class=\"use\">💡 " + p.use + "</div>";
+  d.onclick = function(){ d.classList.toggle("open"); };
+  $("phrase-list").appendChild(d);
+});
+
+/* penlight */
+var LIGHTCOLORS = GUIDES.map(function(g){ return g.color; });
+var beam = $("beam");
+function setLight(col){
+  beam.style.background = "radial-gradient(circle at 50% 30%, #fff, " + col + " 55%, transparent 78%)";
+  beam.style.boxShadow = "0 0 90px 30px " + col + "66";
+  document.querySelectorAll(".light .c").forEach(function(x){ x.classList.toggle("on", x.dataset.c===col); });
+}
+LIGHTCOLORS.forEach(function(col, i){
+  var c = document.createElement("div");
+  c.className = "c"; c.style.background = col; c.dataset.c = col;
+  c.onclick = function(){ setLight(col); };
+  $("colors").appendChild(c);
+});
+setLight(LIGHTCOLORS[0]);
+beam.onclick = function(){
+  beam.classList.remove("pulse"); void beam.offsetWidth; beam.classList.add("pulse");
+};
+function meetLight(col){
+  $("sheetwrap").classList.remove("on");
+  document.querySelectorAll(".tabbar button").forEach(function(x){ x.classList.toggle("on", x.dataset.s==="light"); });
+  document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("on"); });
+  $("scr-light").classList.add("on");
+  setLight(col);
+  beam.classList.remove("pulse"); void beam.offsetWidth; beam.classList.add("pulse");
+}
+
+/* toast */
+var toastTimer = null;
+function toast(msg){
+  var t = $("toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove("on"); }, 2600);
+}
+</script>
+</body>
+</html>
