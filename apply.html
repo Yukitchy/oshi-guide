@@ -1,0 +1,178 @@
+<!-- FORM_ENDPOINT_PLACEHOLDER に Google フォームまたは Formspree の URL を貼れば動きます -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply as a guide — OshiGuide</title>
+<meta name="description" content="Apply to become a local fan guide on OshiGuide — no license, no resume, just the series you love.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#D6335F;
+  --accent-dark:#B02249;
+  --ink:#231C22;
+  --sub:#6E6169;
+  --line:#E4DDE0;
+  --bg:#F5F1F0;
+  --card:#FFFFFF;
+  --deco:rgba(255,255,255,.6);
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Noto Sans JP","Hiragino Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.85;
+  -webkit-font-smoothing:antialiased;font-size:16px;
+}
+body,p,li,td,th,div,span,b,small,summary,button,a,h1,h2,h3,h4,label{
+  word-break:auto-phrase;line-break:strict;overflow-wrap:anywhere;
+}
+h1,h2,h3{font-weight:900;line-height:1.35;text-wrap:balance;letter-spacing:.01em}
+p{max-width:62ch;text-wrap:pretty}
+a{color:inherit}
+.wrap{max-width:1020px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+nav{position:sticky;top:0;background:rgba(245,241,240,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:50}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:"Archivo Black",sans-serif;font-size:20px;text-decoration:none;white-space:nowrap;flex-shrink:0}
+.logo span{color:var(--accent)}
+nav .links{display:flex;gap:14px;font-size:13px;font-weight:700;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+nav .links::-webkit-scrollbar{display:none}
+nav .links a{text-decoration:none;color:var(--sub);white-space:nowrap}
+nav .links a:hover{color:var(--ink)}
+
+main.wrap{padding-top:56px;padding-bottom:72px}
+.eyebrow{letter-spacing:.16em;font-size:13px;font-weight:700;color:var(--accent-dark);margin-bottom:10px}
+h1{font-size:clamp(28px,5vw,44px);margin-bottom:6px}
+.h1-jp{font-size:clamp(17px,2.6vw,22px);font-weight:700;color:var(--sub);margin-bottom:22px}
+.lead{font-size:17px;color:var(--sub);margin-bottom:8px}
+.lead-jp{font-size:15px;color:var(--sub);margin-bottom:40px}
+
+.field{margin-bottom:28px;max-width:560px}
+.field.hero-q{padding:24px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;margin-bottom:40px}
+label{display:block;font-weight:700;font-size:15px;margin-bottom:6px}
+.jp{display:block;font-weight:500;font-size:14px;color:var(--ink);opacity:.8}
+input,select,textarea{width:100%;max-width:560px;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:16px;background:var(--card)}
+textarea{line-height:1.7;resize:vertical}
+
+.btn{display:inline-block;padding:15px 30px;border-radius:999px;font-weight:700;font-size:16px;text-decoration:none;border:none;cursor:pointer;font-family:inherit;transition:transform .12s var(--spring),box-shadow .12s ease}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 10px 26px rgba(214,51,95,.32)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(214,51,95,.38)}
+.btn-primary:active{transform:scale(.98)}
+.alt{margin-top:26px;font-size:14px;color:var(--sub)}
+.alt a{color:var(--accent-dark);font-weight:700}
+
+footer{border-top:1px solid var(--line);padding:32px 0;font-size:14px;color:var(--sub)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+footer a{color:var(--accent-dark);font-weight:700}
+footer .fl{display:flex;flex-wrap:wrap;gap:14px}
+
+.reveal{animation:reveal-in linear both;animation-timeline:view();animation-range:entry 10% cover 32%}
+@keyframes reveal-in{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@supports not (animation-timeline: view()){.reveal{animation:none;opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+@media(max-width:760px){
+  nav .wrap{height:auto;padding:10px 16px;gap:8px 14px;flex-wrap:wrap}
+  nav .links{gap:14px;font-size:13px;flex-wrap:wrap;overflow:visible}
+  main.wrap{padding-top:40px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="index.html">Oshi<span>Guide</span></a>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a href="guides.html" lang="ja">ガイド登録</a>
+      <a href="app.html">App preview</a>
+      <a href="inquiry.html">Plan a trip</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <h1>Apply as a guide</h1>
+  <div class="h1-jp" lang="ja">ガイドとして応募する</div>
+  <p class="lead">No license, no resume, no quota. If you love a series and you know the streets it was drawn from, you can guide. Bookings stay on your own Viator / GetYourGuide page.</p>
+  <p class="lead-jp" lang="ja">資格も履歴書もノルマも不要です。好きな作品があって、その舞台になった街を知っているなら、それだけでガイドになれます。予約と決済はあなた自身のViator / GetYourGuideのページのままです。</p>
+
+  <form action="FORM_ENDPOINT_PLACEHOLDER" method="post">
+
+    <div class="field hero-q">
+      <div class="eyebrow">The most important question / <span lang="ja">いちばん大事な質問</span></div>
+      <label for="f-passion">Why this series? Tell us what you love about it.
+        <span class="jp" lang="ja">その作品のどこが好きか、熱量のまま書いてください</span>
+      </label>
+      <textarea id="f-passion" name="passion" rows="6" required></textarea>
+    </div>
+
+    <div class="field">
+      <label for="f-name">Your name<span class="jp" lang="ja">お名前</span></label>
+      <input id="f-name" name="name" required>
+    </div>
+
+    <div class="field">
+      <label for="f-email">Email<span class="jp" lang="ja">連絡先メール</span></label>
+      <input id="f-email" type="email" name="email" required>
+    </div>
+
+    <div class="field">
+      <label for="f-city">Home city<span class="jp" lang="ja">拠点都市（例: Kyoto, Japan）</span></label>
+      <input id="f-city" name="city" required>
+    </div>
+
+    <div class="field">
+      <label for="f-sites">Series &amp; pilgrimage sites you can guide<span class="jp" lang="ja">案内できる作品・聖地</span></label>
+      <textarea id="f-sites" name="sites" rows="3"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="f-listing">Existing listing URL (Viator, GetYourGuide, etc.)<span class="jp" lang="ja">既存のOTAリスティングURL（任意）</span></label>
+      <input id="f-listing" type="url" name="listing">
+    </div>
+
+    <div class="field">
+      <label for="f-languages">Languages you speak<span class="jp" lang="ja">対応言語</span></label>
+      <input id="f-languages" name="languages">
+    </div>
+
+    <div class="field">
+      <label for="f-price">Price range per tour<span class="jp" lang="ja">料金レンジ</span></label>
+      <select id="f-price" name="price">
+        <option value="Under ¥10,000">Under ¥10,000</option>
+        <option value="¥10,000–20,000">¥10,000–20,000</option>
+        <option value="¥20,000–40,000">¥20,000–40,000</option>
+        <option value="¥40,000+">¥40,000+</option>
+        <option value="Not decided yet">Not decided yet</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Send application / <span lang="ja">応募を送る</span></button>
+  </form>
+
+  <p class="alt">Prefer email? / <span lang="ja">メールでも受け付けます</span> — <a href="mailto:icchan417@gmail.com">icchan417@gmail.com</a></p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 OshiGuide — an Akihabara-born project by Yuuki</div>
+    <div class="fl">
+      <a href="index.html">Home</a>
+      <a href="guides.html" lang="ja">ガイド登録（日本語）</a>
+      <a href="app.html">App preview</a>
+      <a href="inquiry.html">Plan a trip</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

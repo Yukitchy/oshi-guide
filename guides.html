@@ -45,12 +45,16 @@ section:nth-of-type(4n+4)::before{top:44px;right:-40px;width:150px;height:26px;b
 
 nav{position:sticky;top:0;background:rgba(245,241,240,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:50}
 nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{font-family:"Archivo Black",sans-serif;font-size:20px;text-decoration:none}
+.logo{font-family:"Archivo Black",sans-serif;font-size:20px;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .logo span{color:var(--accent)}
+nav .links{display:flex;gap:14px;font-size:13px;font-weight:700;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+nav .links::-webkit-scrollbar{display:none}
+nav .links a{text-decoration:none;color:var(--sub);white-space:nowrap}
+nav .links a:hover{color:var(--ink)}
 nav .tag-jp{font-size:13px;font-weight:700;color:var(--sub)}
 
 .hero{padding:80px 0 70px}
-.eyebrow{letter-spacing:.16em;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:18px}
+.eyebrow{letter-spacing:.16em;font-size:13px;font-weight:700;color:var(--accent-dark);margin-bottom:18px}
 .hero h1{font-size:clamp(30px,5.4vw,50px);margin-bottom:24px}
 .hero h1 em{font-style:normal;color:var(--accent)}
 .hero p{font-size:17px;color:var(--sub);margin-bottom:34px}
@@ -100,6 +104,7 @@ nav .tag-jp{font-size:13px;font-weight:700;color:var(--sub)}
 footer{border-top:1px solid var(--line);padding:32px 0;font-size:14px;color:var(--sub)}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 footer a{color:var(--accent-dark);font-weight:700}
+footer .fl{display:flex;flex-wrap:wrap;gap:14px}
 
 .reveal{animation:reveal-in linear both;animation-timeline:view();animation-range:entry 10% cover 32%}
 @keyframes reveal-in{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
@@ -109,6 +114,9 @@ footer a{color:var(--accent-dark);font-weight:700}
 
 @media(max-width:760px){
   .cols3,.steps,.fit-list{grid-template-columns:1fr}
+  nav .wrap{height:auto;padding:10px 16px;gap:8px 14px;flex-wrap:wrap}
+  nav .links{gap:14px;font-size:13px;flex-wrap:wrap;overflow:visible}
+  nav .tag-jp{display:none}
   .hero{padding:56px 0 50px}
 }
 </style>
@@ -118,6 +126,11 @@ footer a{color:var(--accent-dark);font-weight:700}
 <nav>
   <div class="wrap">
     <a class="logo" href="index.html">Oshi<span>Guide</span></a>
+    <div class="links">
+      <a href="index.html">English top</a>
+      <a href="apply.html">応募フォーム</a>
+      <a href="app.html">アプリ体験版</a>
+    </div>
     <div class="tag-jp">ガイド登録（日本語）</div>
   </div>
 </nav>
@@ -225,17 +238,85 @@ footer a{color:var(--accent-dark);font-weight:700}
 <section class="last-cta" id="apply">
   <div class="wrap reveal">
     <h2>推しの話、仕事にしてみませんか。</h2>
-    <p>下のボタンからメールで応募できます（3項目だけ・履歴書不要）。「質問だけ」も歓迎です。</p>
-    <a class="btn btn-primary" href="mailto:icchan417@gmail.com?subject=OshiGuide%20%E3%82%AC%E3%82%A4%E3%83%89%E5%BF%9C%E5%8B%9F&body=%E6%A1%88%E5%86%85%E3%81%A7%E3%81%8D%E3%82%8B%E8%A1%97%EF%BC%9A%0A%E8%AA%9E%E3%82%8C%E3%82%8B%E4%BD%9C%E5%93%81%EF%BC%9A%0A%E8%A9%B1%E3%81%9B%E3%82%8B%E8%A8%80%E8%AA%9E%EF%BC%9A%0A%EF%BC%88%E8%B3%AA%E5%95%8F%E3%81%A0%E3%81%91%E3%81%A7%E3%82%82OK%EF%BC%89">ガイドに応募する</a>
+    <p>下のボタンから応募フォームに進めます（入力は数項目・履歴書不要）。「質問だけ」も歓迎です。</p>
+    <a class="btn btn-primary" href="apply.html">ガイドに応募する</a>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
     <div>運営: ユウキ（秋葉原ガイド・Guide #001）</div>
-    <div><a href="index.html">英語版トップページ →</a></div>
+    <div class="fl">
+      <a href="index.html">英語版トップページ →</a>
+      <a href="apply.html">応募フォーム</a>
+      <a href="app.html">アプリ体験版</a>
+    </div>
   </div>
 </footer>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "本当に資格がなくても違法じゃないの？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "はい。以前は「通訳案内士」の資格がないと報酬を得てガイドすることは禁止でしたが、2018年1月の通訳案内士法改正でこの業務独占が廃止され、誰でも有償ガイドができるようになりました。現在も制限されているのは「全国通訳案内士」という名称を名乗ることだけです。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "英語に自信がありません",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "完璧な英語よりも「伝えたい熱意」のほうがゲストの満足度に効きます。翻訳アプリを堂々と使ってください。むしろ推しの話になると言葉の壁を忘れて盛り上がるのが、このマッチングの面白いところです。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "いくら稼げますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ツアーの価格はあなた自身が決めます（プラットフォームの手数料が引かれます）。相場感や値付けのコツは面談のときに現役ガイドの実例を見ながらお話しします。誇大な金額を約束することはしません。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "OshiGuideに支払うお金は？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ありません。掲載もマッチングも無料です。予約はあなた自身のViator等のページで成立するので、売上もそのままあなたのアカウントに入ります。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "ツアー中のトラブルや安全面が心配です",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "予約・決済・キャンセル規定は大手プラットフォームの仕組みに乗る形なので、個人間の現金トラブルは発生しません。行程の組み方や緊急時の対応は、セットアップのときに一緒に整えます。"
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "OshiGuide",
+  "description": "資格がなくてもできる、聖地の現地ガイド副業。プロの通訳案内士じゃなくていい。海外から来るファンに「現地に詳しい友達」として1日つきあう仕事です。",
+  "founder": {
+    "@type": "Person",
+    "name": "ユウキ",
+    "description": "秋葉原ガイド・Guide #001"
+  },
+  "sameAs": [
+    "https://animesenseijp.com"
+  ]
+}
+</script>
 </body>
 </html>

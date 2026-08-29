@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OshiGuide App — prototype</title>
 <meta name="description" content="Interactive prototype of the OshiGuide matching app.">
+<meta name="robots" content="noindex,follow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Archivo+Black&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
@@ -175,7 +176,7 @@ p.lead{font-size:14px;color:var(--sub);margin-bottom:18px;text-wrap:pretty}
 <div class="phone"><div class="scr">
   <div class="statusbar"><span>9:41</span><span class="right">●●●● 5G ▮</span></div>
   <div class="appbar">
-    <div class="logo">Oshi<span>Guide</span></div>
+    <a href="index.html" class="logo" style="text-decoration:none;color:inherit">Oshi<span>Guide</span></a>
     <div class="proto">Prototype</div>
   </div>
 
@@ -264,7 +265,7 @@ p.lead{font-size:14px;color:var(--sub);margin-bottom:18px;text-wrap:pretty}
     <button data-s="light"><svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M10.5 14.5L10 21.5h4l-.5-7"/></svg>Light</button>
   </div>
 </div></div>
-<p class="desk-note">Interactive prototype · demo data only · <a href="index.html">back to oshiguide top</a></p>
+<p class="desk-note">Interactive prototype · demo data only · <a href="index.html">back to oshiguide top</a> · <a href="inquiry.html">request a match</a></p>
 </div>
 </div>
 
@@ -322,7 +323,8 @@ var SPOTS = [
 
 var picked = [], city = "Anywhere", stamped = 0;
 function $(id){ return document.getElementById(id); }
-function esc(s){ return s; }
+/* No HTML escaping here on purpose: every string below is static demo data.
+   If form/user input ever reaches these innerHTML paths, add real escaping. */
 
 /* tabs */
 $("tabbar").addEventListener("click", function(e){

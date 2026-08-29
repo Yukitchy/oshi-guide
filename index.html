@@ -44,15 +44,16 @@ section:nth-of-type(4n+4)::before{top:44px;right:-40px;width:150px;height:26px;b
 /* nav */
 nav{position:sticky;top:0;background:rgba(245,241,240,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:50}
 nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{font-family:"Archivo Black",sans-serif;font-size:20px;text-decoration:none}
+.logo{font-family:"Archivo Black",sans-serif;font-size:20px;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .logo span{color:var(--accent)}
-nav .links{display:flex;gap:22px;font-size:14px;font-weight:700}
-nav .links a{text-decoration:none;color:var(--sub)}
+nav .links{display:flex;gap:22px;font-size:14px;font-weight:700;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+nav .links::-webkit-scrollbar{display:none}
+nav .links a{text-decoration:none;color:var(--sub);white-space:nowrap}
 nav .links a:hover{color:var(--ink)}
 
 /* hero */
 .hero{padding:88px 0 76px}
-.eyebrow{letter-spacing:.16em;text-transform:uppercase;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:18px}
+.eyebrow{letter-spacing:.16em;text-transform:uppercase;font-size:13px;font-weight:700;color:var(--accent-dark);margin-bottom:18px}
 .hero h1{font-size:clamp(38px,6.4vw,64px);margin-bottom:22px}
 .hero h1 em{font-style:normal;color:var(--accent)}
 .hero p{font-size:18px;color:var(--sub);margin-bottom:34px}
@@ -97,7 +98,7 @@ nav .links a:hover{color:var(--ink)}
 .gcard .link:hover{background-size:100% 2px}
 .gcard.recruit{background:transparent;border:2px dashed var(--line)}
 .gcard.recruit h3{color:var(--sub)}
-.badge{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.badge{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-dark)}
 
 /* fandom strip */
 .fandoms{background:var(--ink);color:#F5F1F0}
@@ -114,13 +115,15 @@ nav .links a:hover{color:var(--ink)}
 .cta-card.pink{background:var(--accent);color:#fff}
 .cta-card h3{font-size:24px;margin-bottom:12px}
 .cta-card p{font-size:15px;margin-bottom:24px}
-.cta-card.pink p{color:rgba(255,255,255,.9)}
+.cta-card.pink p{color:#fff}
 .cta-card .btn{font-size:15px;padding:13px 26px}
 .cta-card.pink .btn{background:#fff;color:var(--accent-dark)}
 .cta-card:not(.pink) .btn{background:var(--ink);color:#fff}
 
 footer{border-top:1px solid var(--line);padding:34px 0;font-size:14px;color:var(--sub)}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+footer a{color:var(--accent-dark);font-weight:700}
+footer .fl{display:flex;flex-wrap:wrap;gap:14px}
 
 /* reveal on scroll, once */
 .reveal{animation:reveal-in linear both;animation-timeline:view();animation-range:entry 10% cover 32%}
@@ -132,7 +135,8 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 @media(max-width:760px){
   .steps,.guides-grid,.dual{grid-template-columns:1fr}
   .hero{padding:60px 0 56px}
-  nav .links{display:none}
+  nav .wrap{height:auto;padding:10px 16px;gap:8px 14px;flex-wrap:wrap}
+  nav .links{gap:14px;font-size:13px;flex-wrap:wrap;overflow:visible}
 }
 </style>
 </head>
@@ -140,11 +144,12 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 
 <nav>
   <div class="wrap">
-    <a class="logo" href="#">Oshi<span>Guide</span></a>
+    <a class="logo" href="index.html">Oshi<span>Guide</span></a>
     <div class="links">
       <a href="#how">How it works</a>
       <a href="#guides">Guides</a>
-      <a href="#for-guides">Become a guide</a>
+      <a href="inquiry.html">Plan a trip</a>
+      <a href="apply.html">Become a guide</a>
     </div>
   </div>
 </nav>
@@ -170,7 +175,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 <section class="sec" id="how">
   <div class="wrap">
     <h2 class="sec-t">How it works</h2>
-    <p class="sec-lead">Three steps. No account, no platform fees.</p>
+    <p class="sec-lead">Three steps. No account, no OshiGuide fee.</p>
     <div class="steps">
       <div class="step reveal">
         <div class="n">1</div>
@@ -224,19 +229,19 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
         <div class="badge">Recruiting</div>
         <h3>Kyoto &amp; Uji, Japan</h3>
         <p>Sound! Euphonium, Bocchi the Rock filming spots, Kyoto Animation territory. Are you the fan who knows every cut?</p>
-        <a class="link" href="#for-guides">This could be you →</a>
+        <a class="link" href="apply.html">This could be you →</a>
       </div>
       <div class="gcard recruit reveal">
         <div class="badge">Recruiting</div>
         <h3>Paris, France</h3>
         <p>From Japan Expo to the real streets behind your favorite series set in Paris. Local fans wanted.</p>
-        <a class="link" href="#for-guides">This could be you →</a>
+        <a class="link" href="apply.html">This could be you →</a>
       </div>
       <div class="gcard recruit reveal">
         <div class="badge">Recruiting</div>
         <h3>Seoul · Taipei · Los Angeles</h3>
         <p>Anime pilgrimage culture is global now. If your city has fans flying in, they deserve a fan at the airport side too.</p>
-        <a class="link" href="#for-guides">This could be you →</a>
+        <a class="link" href="apply.html">This could be you →</a>
       </div>
     </div>
   </div>
@@ -258,13 +263,13 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
       <div class="cta-card pink reveal">
         <h3>Traveling somewhere sacred?</h3>
         <p>Tell us your fandom, destination and dates. A real human (Yuuki) matches you with a local fan guide — for free.</p>
-        <a class="btn" href="mailto:icchan417@gmail.com?subject=OshiGuide%20request%3A%20%5Byour%20fandom%5D%20in%20%5Bcity%5D&body=Fandom(s)%3A%0ACity%20%2F%20site%3A%0ADates%3A%0AGroup%20size%3A">Request a match</a>
+        <a class="btn" href="inquiry.html">Request a match</a>
       </div>
       <div class="cta-card reveal" id="for-guides">
         <h3>You're the local fan?</h3>
         <p>Free listing, forever. Keep taking bookings on your own Viator or GetYourGuide page — we just send fans your way.</p>
-        <a class="btn" href="mailto:icchan417@gmail.com?subject=OshiGuide%20guide%20application%3A%20%5Byour%20city%5D&body=City%20%2F%20pilgrimage%20sites%3A%0AFandoms%20you%20can%20guide%3A%0AYour%20existing%20listing%20(Viator%20etc.)%2C%20if%20any%3A%0ALanguages%3A">Apply as a guide</a>
-        <p style="margin:14px 0 0;font-size:14px"><a class="link" href="guides.html">日本語のガイド登録ページはこちら →</a></p>
+        <a class="btn" href="apply.html">Apply as a guide</a>
+        <p style="margin:14px 0 0;font-size:14px"><a class="link" href="guides.html" lang="ja">日本語のガイド登録ページはこちら →</a></p>
       </div>
     </div>
   </div>
@@ -274,6 +279,12 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
   <div class="wrap">
     <div>© 2026 OshiGuide — an Akihabara-born project by Yuuki</div>
     <div>Guide #001 reporting from Akihabara, Tokyo 🗼</div>
+    <div class="fl">
+      <a href="guides.html" lang="ja">ガイド登録（日本語）</a>
+      <a href="app.html">App preview</a>
+      <a href="apply.html">Become a guide</a>
+      <a href="inquiry.html">Plan a trip</a>
+    </div>
   </div>
 </footer>
 
