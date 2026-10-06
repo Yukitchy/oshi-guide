@@ -64,6 +64,8 @@ textarea{line-height:1.7;resize:vertical}
 .btn-primary{background:var(--accent);color:#fff;box-shadow:0 10px 26px rgba(214,51,95,.32)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(214,51,95,.38)}
 .btn-primary:active{transform:scale(.98)}
+.form-status{margin-top:16px;font-size:15px;font-weight:700}
+.form-status:empty{display:none}
 .alt{margin-top:26px;font-size:14px;color:var(--sub)}
 .alt a{color:var(--accent-dark);font-weight:700}
 
@@ -105,7 +107,8 @@ footer .fl{display:flex;flex-wrap:wrap;gap:14px}
   <p class="lead">A real human (Yuuki) reads every request and matches you with a local fan guide. Matching is free.</p>
   <p class="lead-jp" lang="ja">リクエストは全て本人（ユウキ）が読んで、現地のファンガイドとおつなぎします。マッチングは無料です。</p>
 
-  <form action="FORM_ENDPOINT_PLACEHOLDER" method="post">
+  <form id="inquiry-form">
+    <input type="text" name="website" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px" aria-hidden="true">
 
     <div class="field">
       <label for="f-name">Your name<span class="jp" lang="ja">お名前</span></label>
@@ -151,12 +154,46 @@ footer .fl{display:flex;flex-wrap:wrap;gap:14px}
     </div>
 
     <button class="btn btn-primary" type="submit">Send request / <span lang="ja">相談を送る</span></button>
+    <p class="form-status" id="inquiry-status" role="status" aria-live="polite"></p>
   </form>
 
   <p class="alt">Matching is free. You book and pay on the guide's own Viator / GetYourGuide page.<br>
     <span lang="ja">マッチングは無料です。予約と支払いはガイド本人のViator / GetYourGuideのページで行います。</span></p>
   <p class="alt">Prefer email? / <span lang="ja">メールでも受け付けます</span> — <a href="mailto:icchan417@gmail.com">icchan417@gmail.com</a></p>
 </main>
+<script>
+(() => {
+  const form = document.getElementById('inquiry-form');
+  const status = document.getElementById('inquiry-status');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    status.textContent = 'Sending… / 送信中…';
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.kind = 'inquiry';
+    try {
+      const res = await fetch('https://oshi-guide-forms.icchan417.workers.dev/', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const out = await res.json();
+      if (out.ok) {
+        form.reset();
+        form.hidden = true;
+        status.textContent = '✅ Sent! Yuuki will read this and reply by email. / 送信しました。本人が読んでメールで返信します。';
+        status.hidden = false;
+      } else {
+        throw new Error(out.error || 'failed');
+      }
+    } catch (err) {
+      status.textContent = '⚠️ Something went wrong. Please email icchan417@gmail.com directly. / 送信に失敗しました。icchan417@gmail.com へ直接メールしてください。';
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
 
 <footer>
   <div class="wrap">

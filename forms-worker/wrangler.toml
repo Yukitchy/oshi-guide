@@ -1,0 +1,9 @@
+# OshiGuide（apply.html / inquiry.html）の受付Worker（2026-10-06）。
+# GitHub Pages（yukitchy.github.io）には独自ドメインが無くWorkers routeを張れないため、
+# workers.dev サブドメインで公開し、フォームからJSでfetch POSTする（CORSはORIGINを固定で許可）。
+name = "oshi-guide-forms"
+main = "index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+kv_namespaces = [{ binding = "OSHI_SUBMISSIONS", id = "988fc252afad446597ac98255e4761ca" }]
+send_email = [{ name = "MAIL", destination_address = "icchan417@gmail.com" }]
